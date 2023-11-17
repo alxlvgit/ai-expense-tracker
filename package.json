@@ -6,17 +6,32 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generate": "drizzle-kit generate:pg",
+    "db:push": "drizzle-kit push:pg",
+    "migrate": "bunx tsx ./src/db/migrate.ts",
+    "seed": "bunx tsx ./src/db/seed.ts",
+    "drizzle-studio": "drizzle-kit studio"
   },
   "dependencies": {
+    "@auth/core": "^0.18.1",
+    "@auth/drizzle-adapter": "^0.3.6",
+    "@neondatabase/serverless": "^0.6.0",
+    "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.29.0",
+    "next": "14.0.3",
+    "next-auth": "5.0.0-beta.3",
+    "pg": "^8.11.3",
+    "postgres": "^3.4.3",
     "react": "^18",
-    "react-dom": "^18",
-    "next": "14.0.3"
+    "react-dom": "^18"
   },
   "devDependencies": {
     "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
+    "@types/next-auth": "^3.15.0",
+    "drizzle-kit": "^0.20.1",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
     "postcss": "^8",
