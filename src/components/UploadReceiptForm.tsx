@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { getSignedURL } from "@/app/actions";
 import { twMerge } from "tailwind-merge";
+import { imageToText } from "@/app/image-to-text";
 
 export default function UploadReceiptForm({
   user,
@@ -16,12 +17,14 @@ export default function UploadReceiptForm({
   const [loading, setLoading] = useState(false);
 
   const computeSHA256 = async (file: File) => {
-    const buffer = await file.arrayBuffer();
-    const hashBuffer = await crypto.subtle.digest("SHA-256", buffer);
+    const bytes = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest("SHA-256", bytes);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     const hashHex = hashArray
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
+    const base64String = Buffer.from(bytes).toString("base64");
+    await imageToText(base64String);
     return hashHex;
   };
 
