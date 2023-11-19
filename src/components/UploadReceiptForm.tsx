@@ -2,9 +2,9 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { getSignedURL } from "@/app/actions";
+import { addReceipt, getSignedURL } from "@/app/actions";
 import { twMerge } from "tailwind-merge";
-import { imageToText } from "@/app/image-to-text";
+import { imageToText, textToObject } from "@/app/image-to-text";
 
 export default function UploadReceiptForm({
   user,
@@ -24,20 +24,20 @@ export default function UploadReceiptForm({
       .map((b) => b.toString(16).padStart(2, "0"))
       .join("");
     const base64String = Buffer.from(bytes).toString("base64");
-    await imageToText(base64String);
-    return hashHex;
+    return { checksum: hashHex, base64String };
   };
 
   const handleFileUpload = async (file: File) => {
+    const { checksum, base64String } = await computeSHA256(file);
     const signedURLResult = await getSignedURL({
       fileSize: file.size,
       fileType: file.type,
-      checksum: await computeSHA256(file),
+      checksum,
     });
     if (signedURLResult.failure !== undefined) {
       throw new Error(signedURLResult.failure);
     }
-    const { url } = signedURLResult.success;
+    const { url, fileId } = signedURLResult.success;
     await fetch(url, {
       method: "PUT",
       headers: {
@@ -47,16 +47,49 @@ export default function UploadReceiptForm({
     });
 
     const fileUrl = url.split("?")[0];
-    return fileUrl;
+    return { fileUrl, fileId, base64String };
+  };
+
+  type FileData = {
+    fileUrl: string | null;
+    fileId: number | null;
+    base64String: string | null;
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
+      let fileData: FileData = {
+        fileUrl: null,
+        fileId: null,
+        base64String: null,
+      };
       if (file) {
         setStatusMessage("Uploading...");
-        await handleFileUpload(file);
+        const fileUploaded = await handleFileUpload(file);
+        fileData = fileUploaded;
+      } else {
+        throw new Error("No receipt selected");
+      }
+      setStatusMessage("Adding receipt...");
+      const receiptText = await imageToText(fileData.base64String!);
+      if (receiptText.failure) {
+        throw new Error(receiptText.failure);
+      }
+      const receiptData = await textToObject(receiptText.success!);
+      if (receiptData.failure) {
+        throw new Error(receiptData.failure);
+      }
+      const receipt = receiptData.success!;
+      const receiptAddedToDb = await addReceipt({
+        fileId: fileData.fileId!,
+        receiptDate: receipt.date,
+        receiptCategory: receipt.category,
+        receiptTotal: `${receipt.total}`,
+      });
+      if (receiptAddedToDb?.failure) {
+        throw new Error(receiptAddedToDb.failure);
       }
       setStatusMessage("Receipt added successfully");
     } catch (error) {

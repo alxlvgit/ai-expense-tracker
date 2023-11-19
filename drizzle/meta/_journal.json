@@ -1,13 +1,1 @@
-{
-  "version": "5",
-  "dialect": "pg",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1700259341321,
-      "tag": "0000_polite_malcolm_colcord",
-      "breakpoints": true
-    }
-  ]
-}
+{"version":"5","dialect":"pg","entries":[{"idx":4,"version":"5","when":1700383438611,"tag":"0004_nasty_greymalkin","breakpoints":true}]}
