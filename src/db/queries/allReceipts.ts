@@ -1,4 +1,4 @@
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { db } from "../index";
 import { receipts as receiptsTable } from "../schema";
 import { users as usersTable } from "../schema";
@@ -28,6 +28,11 @@ const baseQuery = db
   .leftJoin(mediaTable, eq(mediaTable.receiptId, receiptsTable.id));
 
 export const receiptsQuery = baseQuery
+  .orderBy(desc(receiptsTable.dateAdded))
+  .prepare("receipts");
+
+export const receiptsForUser = baseQuery
+  .where(eq(usersTable.id, sql.placeholder("userId")))
   .orderBy(desc(receiptsTable.dateAdded))
   .prepare("receipts_for_user");
 

@@ -9,8 +9,11 @@ export default async function Home() {
   }
   const { user } = session;
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <h1 className="text-6xl font-bold text-center">Expense Tracker</h1>
+    <main className="flex min-h-screen flex-col w-full justify-between px-20 py-16">
+      <h1 className="font-bold text-lg">Welcome, {user.name}!</h1>
+      <h2 className="text-xs text-gray-500 mt-1">
+        {new Date().toLocaleString("en-US")}
+      </h2>
       <UploadReceiptForm user={user} />
     </main>
   );

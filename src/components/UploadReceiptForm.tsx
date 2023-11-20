@@ -117,7 +117,7 @@ export default function UploadReceiptForm({
   return (
     <>
       <form
-        className="border border-neutral-500 rounded-lg px-16 py-10"
+        className="border w-1/2 m-auto border-neutral-500 rounded-lg px-16 py-10"
         onSubmit={handleSubmit}
       >
         {statusMessage && (

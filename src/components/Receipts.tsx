@@ -1,13 +1,13 @@
-import { receiptsQuery } from "@/db/queries/allReceipts";
+import { receiptsForUser, receiptsQuery } from "@/db/queries/allReceipts";
 import Image from "next/image";
 import Link from "next/link";
 
-export default async function Receipts() {
-  const receipts = await receiptsQuery.execute();
+export default async function Receipts({ userId }: { userId: string }) {
+  const receipts = await receiptsForUser.execute({ userId });
   return (
     <>
       {receipts.map((receipt) => (
-        <div key={receipt.id}>
+        <div key={receipt.id} className="mb-8">
           <h2>
             Receipt Date:{" "}
             {new Date(receipt.receiptDate).toLocaleDateString("en-US", {
