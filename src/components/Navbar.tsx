@@ -6,7 +6,7 @@ import { CreditCardIcon } from "@heroicons/react/24/outline";
 export default async function Navbar() {
   return (
     <nav
-      className="flex justify-start h-full items-center align-middle  text-blue-800"
+      className="flex justify-start h-full items-center align-middle text-blue-800"
       role="navigation"
     >
       <Link className="text-center text-sm font-bold group" href="/">

@@ -1,32 +1,44 @@
-import { receiptsForUser, receiptsQuery } from "@/db/queries/allReceipts";
-import Image from "next/image";
-import Link from "next/link";
+"use client";
 
-export default async function Receipts({ userId }: { userId: string }) {
-  const receipts = await receiptsForUser.execute({ userId });
+import { Receipt } from "@/db/queries/allReceipts";
+import ReceiptContainer from "./ReceiptContainer";
+import { useState } from "react";
+import UpdateReceiptModal from "./UpdateReceiptModal";
+
+export const Receipts = ({ receipts }: { receipts: Receipt[] }) => {
+  const [isModalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+  const closeModal = () => setModalOpen(false);
+  const [receipt, setReceipt] = useState<Receipt | null>(null);
+
   return (
     <>
-      {receipts.map((receipt) => (
-        <div key={receipt.id} className="mb-8">
-          <h2>
-            Receipt Date:{" "}
-            {new Date(receipt.receiptDate).toLocaleDateString("en-US", {
-              timeZone: "UTC",
-            })}
-          </h2>
-          <p>Date Added: {receipt.dateAdded.toLocaleDateString("en-US")}</p>
-          <p>Total: ${receipt.receiptTotal}</p>
-          <p>Category: {receipt.receiptCategory}</p>
-          <Link href={receipt.media!.url}>
-            <Image
-              src={receipt.media!.url}
-              alt="Receipt"
-              width={300}
-              height={300}
-            />
-          </Link>
-        </div>
-      ))}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-3">
+        {receipts.map((receipt) => (
+          <ReceiptContainer
+            key={receipt.id}
+            receipt={receipt}
+            setEditModalOpen={() => {
+              setReceipt(receipt);
+              openModal();
+            }}
+          />
+        ))}
+      </div>
+
+      {receipt && (
+        <UpdateReceiptModal
+          isOpen={isModalOpen}
+          receipt={receipt}
+          setEditModalClosed={() => {
+            setReceipt(null);
+            closeModal();
+          }}
+        />
+      )}
     </>
   );
-}
+};

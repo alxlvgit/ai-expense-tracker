@@ -7,8 +7,8 @@ import { db } from "@/db";
 import { media as mediaTable, receipts as receiptsTable } from "@/db/schema";
 import crypto from "crypto";
 import { and, eq } from "drizzle-orm";
-// import { revalidatePath } from "next/cache";
-// import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 
 const s3Client = new S3Client({
   region: process.env.BUCKET_REGION!,
@@ -140,9 +140,9 @@ export const addReceipt = async ({
         .set({ receiptId: addedReceipt[0].id })
         .where(eq(mediaTable.id, fileId));
     }
+    revalidatePath("/expenses");
+    redirect("/expenses");
     return;
-    // revalidatePath("/");
-    // redirect("/");
   } catch (error) {
     console.error(error);
     return { failure: "error adding receipt" };

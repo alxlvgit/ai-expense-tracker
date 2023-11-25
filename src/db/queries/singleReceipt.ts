@@ -9,6 +9,8 @@ export const singleReceiptQuery = db
     id: receiptsTable.id,
     dateAdded: receiptsTable.dateAdded,
     receiptDate: receiptsTable.receiptDate,
+    receiptTotal: receiptsTable.receiptTotal,
+    receiptCategory: receiptsTable.receiptCategory,
     user: {
       id: usersTable.id,
       name: usersTable.name,
