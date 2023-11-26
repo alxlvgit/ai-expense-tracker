@@ -1,6 +1,6 @@
 "use client";
 
-import { updateReceipt } from "@/app/expenses/receipt/actions";
+import { updateReceipt } from "@/app/expenses/actions";
 import { Receipt } from "@/db/queries/allReceipts";
 import { useState } from "react";
 

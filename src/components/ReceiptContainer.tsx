@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { Receipt } from "@/db/queries/allReceipts";
+import { deleteReceipt } from "@/app/expenses/actions";
 
 export default function ReceiptContainer({
   receipt,
@@ -9,6 +10,14 @@ export default function ReceiptContainer({
   receipt: Receipt;
   setEditModalOpen: () => void;
 }) {
+  const handleDelete = async () => {
+    try {
+      await deleteReceipt(receipt.id);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div
       key={receipt.id}
@@ -51,7 +60,12 @@ export default function ReceiptContainer({
           Edit
         </button>
 
-        <button className="rounded-xl text-xs mt-5 bg-black text-white text-center px-3 py-2 hover:bg-gray-600">
+        <button
+          onClick={() => {
+            handleDelete();
+          }}
+          className="rounded-xl text-xs mt-5 bg-black text-white text-center px-3 py-2 hover:bg-gray-600"
+        >
           Delete
         </button>
       </div>

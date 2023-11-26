@@ -99,52 +99,46 @@ export const addReceipt = async ({
   receiptCategory,
   receiptTotal,
 }: AddReceiptParams): Promise<{ failure: string } | undefined> => {
-  try {
-    // check if user is authenticated
-    const session = await auth();
-    if (!session) {
-      return { failure: "not authenticated" };
-    }
-    // get the user id
-    const userId = session.user.id;
-    // get the file from the database
-    if (fileId) {
-      const file = await db
-        .select({
-          id: mediaTable.id,
-        })
-        .from(mediaTable)
-        .where(and(eq(mediaTable.id, fileId), eq(mediaTable.userId, userId)))
-        .then((rows) => rows[0]);
-
-      if (!file) {
-        return { failure: "receipt image not found" };
-      }
-    }
-
-    // add the receipt to the database
-    const addedReceipt = await db
-      .insert(receiptsTable)
-      .values({
-        userId,
-        receiptCategory,
-        receiptDate,
-        receiptTotal,
-      })
-      .returning();
-
-    if (fileId) {
-      // update the file to reference the receipt
-      await db
-        .update(mediaTable)
-        .set({ receiptId: addedReceipt[0].id })
-        .where(eq(mediaTable.id, fileId));
-    }
-    revalidatePath("/expenses");
-    redirect("/expenses");
-    return;
-  } catch (error) {
-    console.error(error);
-    return { failure: "error adding receipt" };
+  // check if user is authenticated
+  const session = await auth();
+  if (!session) {
+    return { failure: "not authenticated" };
   }
+  // get the user id
+  const userId = session.user.id;
+  // get the file from the database
+  if (fileId) {
+    const file = await db
+      .select({
+        id: mediaTable.id,
+      })
+      .from(mediaTable)
+      .where(and(eq(mediaTable.id, fileId), eq(mediaTable.userId, userId)))
+      .then((rows) => rows[0]);
+
+    if (!file) {
+      return { failure: "receipt image not found" };
+    }
+  }
+
+  // add the receipt to the database
+  const addedReceipt = await db
+    .insert(receiptsTable)
+    .values({
+      userId,
+      receiptCategory,
+      receiptDate,
+      receiptTotal,
+    })
+    .returning();
+
+  if (fileId) {
+    // update the file to reference the receipt
+    await db
+      .update(mediaTable)
+      .set({ receiptId: addedReceipt[0].id })
+      .where(eq(mediaTable.id, fileId));
+  }
+  revalidatePath("/expenses");
+  redirect("/expenses");
 };
