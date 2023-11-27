@@ -40,8 +40,25 @@ export default function ReceiptContainer({
       <div className="flex justify-center col-span-2 lg:col-span-1 items-center w-full h-full relative">
         <Link
           href={receipt.media!.url}
-          className=" w-72 h-72 md:w-52 md:h-52 lg:w-full lg:h-full overflow-hidden rounded-lg brightness-90 hover:brightness-50 "
+          className=" w-72 h-72 md:w-52 md:h-52 lg:w-full relative lg:h-full overflow-hidden rounded-lg "
         >
+          <div className="absolute flex justify-center items-center z-20 bg-black opacity-20 hover:opacity-70 w-full h-full group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-7 h-7 text-white group-hover:opacity-100 opacity-0"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607zM10.5 7.5v6m3-3h-6"
+              />
+            </svg>
+          </div>
+
           <Image
             src={receipt.media!.url}
             alt="Receipt"

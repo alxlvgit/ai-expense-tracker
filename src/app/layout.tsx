@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <header className="w-full h-16 bg-white shadow-sm px-20">
+        <header className="w-full h-16 bg-white shadow-sm px-2 sm:px-20">
           <Navbar />
         </header>
         {children}
