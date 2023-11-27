@@ -20,7 +20,7 @@ export default function TotalForMonth({
     "December",
   ];
   return (
-    <div className="bg-[url('/monthly-total-bg.png')] rounded-lg shadow-lg p-4">
+    <div className="bg-[url('/monthly-total-bg.png')] bg-no-repeat bg-cover rounded-lg shadow-lg p-4">
       <h3 className="text-xs text-white">Hello, {userName}!</h3>
       <p className="text-xs font-bold mt-1 text-white">
         Here is your balance for {monthNames[new Date().getMonth()]}:
