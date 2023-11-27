@@ -1,6 +1,5 @@
 import { auth } from "@/auth";
-import ThreeRecentByCategory from "@/components/ThreeRecentByCategory";
-import TopThreeByCategory from "@/components/TopThreeByCategory";
+import ExpensesStats from "@/components/ExpensesStats";
 import TotalForMonth from "@/components/TotalForMonth";
 import UploadReceiptForm from "@/components/UploadReceiptForm";
 import {
@@ -22,19 +21,11 @@ export default async function Home() {
     receiptYear: new Date().getFullYear(),
   });
 
-  let totalForMonth = "";
-  if (totalForCurrentMonth[0]) {
-    totalForMonth = `$${totalForCurrentMonth[0].totalForMonth}`;
-  } else {
-    totalForMonth = "$0";
-  }
-
-  const totalAllTimeByCategories = await threeHighestExpensesByCategory.execute(
-    {
+  const threeTopExpensesByCategory =
+    await threeHighestExpensesByCategory.execute({
       userId: user.id,
-    }
-  );
-  totalAllTimeByCategories.forEach((category) => {
+    });
+  threeTopExpensesByCategory.forEach((category) => {
     category.category =
       category.category.charAt(0).toUpperCase() + category.category.slice(1);
   });
@@ -59,15 +50,17 @@ export default async function Home() {
         <div className="flex flex-col gap-6">
           <TotalForMonth
             userName={user.name ? user.name : "User"}
-            totalForMonth={totalForMonth}
+            totalForMonth={
+              totalForCurrentMonth[0]
+                ? `$${totalForCurrentMonth[0].totalForMonth}`
+                : "$0"
+            }
           />
           <UploadReceiptForm user={user} />
         </div>
         <div className="flex flex-col gap-6">
-          <TopThreeByCategory topThreeCategories={totalAllTimeByCategories} />
-          <ThreeRecentByCategory
-            threeRecentByCategories={threeRecentByCategories}
-          />
+          <ExpensesStats data={threeTopExpensesByCategory} type="topThree" />
+          <ExpensesStats type="recent" data={threeRecentByCategories} />
         </div>
       </div>
     </main>

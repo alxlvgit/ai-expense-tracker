@@ -53,7 +53,7 @@ export default function UpdateReceiptModal({
       role="dialog"
       aria-modal="true"
     >
-      <div className="flex m-auto mt-10 bg-white flex-col justify-center w-1/2 gap-5 rounded-lg border p-8 ">
+      <div className="flex m-auto mt-10 bg-white flex-col justify-center sm:w-1/3 w-4/5 gap-5 rounded-lg border p-8 ">
         <div className="flex justify-end">
           <button
             onClick={setEditModalClosed}
