@@ -1,10 +1,12 @@
 import { auth } from "@/auth";
+import ThreeRecentByCategory from "@/components/ThreeRecentByCategory";
 import TopThreeByCategory from "@/components/TopThreeByCategory";
 import TotalForMonth from "@/components/TotalForMonth";
 import UploadReceiptForm from "@/components/UploadReceiptForm";
 import {
-  receiptsTotalForUserByCategory,
-  receiptsTotalForUserByMonthYear,
+  threeHighestExpensesByCategory,
+  threeRecentExpensesByCategory,
+  totalExpensesByMonthYear,
 } from "@/db/queries/stats";
 import { redirect } from "next/navigation";
 
@@ -14,7 +16,7 @@ export default async function Home() {
     redirect("/api/auth/signin?callbackUrl=/");
   }
   const { user } = session;
-  const totalForCurrentMonth = await receiptsTotalForUserByMonthYear.execute({
+  const totalForCurrentMonth = await totalExpensesByMonthYear.execute({
     userId: user.id,
     receiptMonth: new Date().getMonth() + 1,
     receiptYear: new Date().getFullYear(),
@@ -27,21 +29,25 @@ export default async function Home() {
     totalForMonth = "$0";
   }
 
-  const totalAllTimeByCategories = await receiptsTotalForUserByCategory.execute(
+  const totalAllTimeByCategories = await threeHighestExpensesByCategory.execute(
     {
       userId: user.id,
     }
   );
-  // Get top 3 categories
-  if (totalAllTimeByCategories.length > 2) {
-    totalAllTimeByCategories.splice(3);
-  }
-  // Capitalize first letter of category
   totalAllTimeByCategories.forEach((category) => {
     category.category =
       category.category.charAt(0).toUpperCase() + category.category.slice(1);
   });
-  console.log(totalAllTimeByCategories);
+
+  const threeRecentByCategories = await threeRecentExpensesByCategory.execute({
+    userId: user.id,
+    receiptYear: new Date().getFullYear(),
+    receiptMonth: new Date().getMonth() + 1,
+  });
+  threeRecentByCategories.forEach((category) => {
+    category.category =
+      category.category.charAt(0).toUpperCase() + category.category.slice(1);
+  });
 
   return (
     <main className="flex min-h-screen flex-col w-full px-6  sm:px-20 py-16">
@@ -59,12 +65,9 @@ export default async function Home() {
         </div>
         <div className="flex flex-col gap-6">
           <TopThreeByCategory topThreeCategories={totalAllTimeByCategories} />
-          <div className="bg-white rounded-lg shadow-lg p-4">
-            <h3 className="text-sm font-bold">Recent Expenses</h3>
-            <p className="text-sm font-bold">Merchant 1</p>
-            <p className="text-sm font-bold">Merchant 2</p>
-            <p className="text-sm font-bold">Merchant 3</p>
-          </div>
+          <ThreeRecentByCategory
+            threeRecentByCategories={threeRecentByCategories}
+          />
         </div>
       </div>
     </main>

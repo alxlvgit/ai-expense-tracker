@@ -2,6 +2,7 @@ import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "../index";
 import { receipts as receiptsTable } from "../schema";
 
+// Get all time receipts total for a user
 export const allTimeReceiptsTotalForUser = db
   .select({
     total: sql<number>`sum (${receiptsTable.receiptTotal})`,
@@ -10,7 +11,8 @@ export const allTimeReceiptsTotalForUser = db
   .where(eq(receiptsTable.userId, sql.placeholder("userId")))
   .prepare("receipts_total_for_user");
 
-export const receiptsTotalForUserByCategory = db
+// Get the total expenses for three highest categories
+export const threeHighestExpensesByCategory = db
   .select({
     total: sql<number>`sum (${receiptsTable.receiptTotal})`,
     category: receiptsTable.receiptCategory,
@@ -18,10 +20,37 @@ export const receiptsTotalForUserByCategory = db
   .from(receiptsTable)
   .where(eq(receiptsTable.userId, sql.placeholder("userId")))
   .groupBy(receiptsTable.receiptCategory)
-  .orderBy(desc(receiptsTable.receiptCategory))
+  .orderBy(desc(sql<number>`sum (${receiptsTable.receiptTotal})`))
+  .limit(3)
   .prepare("receipts_total_for_user_by_category");
 
-export const receiptsTotalForUserByMonthYear = db
+// Get the expenses for three categories for month/year ordered by day of month
+export const threeRecentExpensesByCategory = db
+  .select({
+    total: sql<number>`sum (${receiptsTable.receiptTotal})`,
+    category: receiptsTable.receiptCategory,
+  })
+  .from(receiptsTable)
+  .where(
+    and(
+      eq(receiptsTable.userId, sql.placeholder("userId")),
+      eq(
+        sql<number>`extract(year from ${receiptsTable.receiptDate})`,
+        sql.placeholder("receiptYear")
+      ),
+      eq(
+        sql<number>`extract(month from ${receiptsTable.receiptDate})`,
+        sql.placeholder("receiptMonth")
+      )
+    )
+  )
+  .groupBy(receiptsTable.receiptCategory, receiptsTable.receiptDate)
+  .orderBy(desc(sql<number>`extract(day from ${receiptsTable.receiptDate})`))
+  .limit(3)
+  .prepare("receipts_total_for_user_by_category_by_month");
+
+// Get the total expenses for month/year
+export const totalExpensesByMonthYear = db
   .select({
     totalForMonth: sql<number>`sum (${receiptsTable.receiptTotal})`,
   })
