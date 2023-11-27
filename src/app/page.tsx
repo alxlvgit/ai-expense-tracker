@@ -1,7 +1,11 @@
 import { auth } from "@/auth";
+import TopThreeByCategory from "@/components/TopThreeByCategory";
 import TotalForMonth from "@/components/TotalForMonth";
 import UploadReceiptForm from "@/components/UploadReceiptForm";
-import { receiptsTotalForUserByMonthYear } from "@/db/queries/stats";
+import {
+  receiptsTotalForUserByCategory,
+  receiptsTotalForUserByMonthYear,
+} from "@/db/queries/stats";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
@@ -23,6 +27,22 @@ export default async function Home() {
     totalForMonth = "$0";
   }
 
+  const totalAllTimeByCategories = await receiptsTotalForUserByCategory.execute(
+    {
+      userId: user.id,
+    }
+  );
+  // Get top 3 categories
+  if (totalAllTimeByCategories.length > 2) {
+    totalAllTimeByCategories.splice(3);
+  }
+  // Capitalize first letter of category
+  totalAllTimeByCategories.forEach((category) => {
+    category.category =
+      category.category.charAt(0).toUpperCase() + category.category.slice(1);
+  });
+  console.log(totalAllTimeByCategories);
+
   return (
     <main className="flex min-h-screen flex-col w-full px-6  sm:px-20 py-16">
       <h1 className="font-bold text-lg">Welcome, {user.name}!</h1>
@@ -38,12 +58,7 @@ export default async function Home() {
           <UploadReceiptForm user={user} />
         </div>
         <div className="flex flex-col gap-6">
-          <div className="bg-white rounded-lg shadow-lg p-4">
-            <h3 className="text-sm font-bold">Top Expenses</h3>
-            <p className="text-sm font-bold">Category 1</p>
-            <p className="text-sm font-bold">Category 2</p>
-            <p className="text-sm font-bold">Category 3</p>
-          </div>
+          <TopThreeByCategory topThreeCategories={totalAllTimeByCategories} />
           <div className="bg-white rounded-lg shadow-lg p-4">
             <h3 className="text-sm font-bold">Recent Expenses</h3>
             <p className="text-sm font-bold">Merchant 1</p>

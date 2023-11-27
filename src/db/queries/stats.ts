@@ -1,4 +1,4 @@
-import { and, asc, eq, sql } from "drizzle-orm";
+import { and, asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "../index";
 import { receipts as receiptsTable } from "../schema";
 
@@ -18,6 +18,7 @@ export const receiptsTotalForUserByCategory = db
   .from(receiptsTable)
   .where(eq(receiptsTable.userId, sql.placeholder("userId")))
   .groupBy(receiptsTable.receiptCategory)
+  .orderBy(desc(receiptsTable.receiptCategory))
   .prepare("receipts_total_for_user_by_category");
 
 export const receiptsTotalForUserByMonthYear = db
