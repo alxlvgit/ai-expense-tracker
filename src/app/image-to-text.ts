@@ -92,8 +92,7 @@ export const textToObject = async (text: string): TextToObjectResponse => {
     if (!structuredData) {
       return { failure: "Could not extract structured data from text" };
     }
-    // For now prevent the user to upload any receipts where the date, category or total is not visible and not extracted
-    // TODO: Complete the receipt upload if the date,category or total is not visible but let the user to manually add the missing values
+    // Prevent the user to upload any receipts where the date, category or total is not visible and not extracted
     const obj = JSON.parse(structuredData);
     if (!obj.date) {
       return { failure: "Could not extract date from the text" };
