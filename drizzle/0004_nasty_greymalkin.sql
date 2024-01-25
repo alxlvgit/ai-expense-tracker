@@ -1,1 +1,0 @@
-ALTER TABLE "receipt" ALTER COLUMN "receipt_date" SET DATA TYPE date;

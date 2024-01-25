@@ -62,7 +62,9 @@ export const media = pgTable("media", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id),
-  receiptId: integer("receipt_id").references(() => receipts.id),
+  receiptId: integer("receipt_id").references(() => receipts.id, {
+    onDelete: "cascade",
+  }),
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),

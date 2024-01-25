@@ -33,7 +33,7 @@ export const imageToText = async (base64Image: string): ImageToTextResponse => {
           content: [
             {
               type: "text",
-              text: "What is the date, purchase category and total on this receipt image?",
+              text: "What is the date, purchase category and total on this receipt image? Do not list the items on the receipt or describe the image. If something is not visible, write 'not visible' next to it.",
             },
             {
               type: "image_url",
@@ -57,21 +57,21 @@ export const imageToText = async (base64Image: string): ImageToTextResponse => {
   }
 };
 
+const schema = z.object({
+  total: z.number().describe("The total amount on the receipt"),
+  date: z.coerce
+    .date()
+    .describe("The date of the receipt in the format MM-DD-YYYY"),
+  category: z
+    .enum(["grocery", "transportation", "clothing", "other"])
+    .describe("The category of the receipt"),
+});
+
 // Schema for the extraction function
 const extractionFunctionSchema = {
   name: "extractor",
   description: "Extracts the date, category and total from a receipt image",
-  parameters: zodToJsonSchema(
-    z.object({
-      total: z.number().describe("The total amount on the receipt"),
-      date: z.coerce
-        .date()
-        .describe("The date of the receipt in the format MM-DD-YYYY"),
-      category: z
-        .enum(["grocery", "transportation", "clothing", "other"])
-        .describe("The category of the receipt"),
-    })
-  ),
+  parameters: zodToJsonSchema(schema),
 };
 
 // Convert extracted text to an object with the date, category and total
@@ -83,10 +83,11 @@ export const textToObject = async (text: string): TextToObjectResponse => {
       functions: [extractionFunctionSchema],
       function_call: { name: "extractor" },
     });
-
+    console.log(text);
     const result = await model.invoke([new HumanMessage(text)]);
     console.log(
-      JSON.parse(result.additional_kwargs.function_call?.arguments as string)
+      JSON.parse(result.additional_kwargs.function_call?.arguments as string),
+      "result"
     );
     const structuredData = result?.additional_kwargs?.function_call?.arguments;
     if (!structuredData) {
@@ -94,14 +95,9 @@ export const textToObject = async (text: string): TextToObjectResponse => {
     }
     // Prevent the user to upload any receipts where the date, category or total is not visible and not extracted
     const obj = JSON.parse(structuredData);
-    if (!obj.date) {
-      return { failure: "Could not extract date from the text" };
-    }
-    if (!obj.category) {
-      return { failure: "Could not extract category from the text" };
-    }
-    if (!obj.total) {
-      return { failure: "Could not extract total from the text" };
+    const validationResult = schema.safeParse(obj);
+    if (!validationResult.success) {
+      return { failure: validationResult.error.message };
     }
     return { success: obj };
   } catch (error) {
@@ -109,3 +105,5 @@ export const textToObject = async (text: string): TextToObjectResponse => {
     return { failure: "Could not extract structured data from text" };
   }
 };
+
+// TODO: Set less restrictions on the receipt upload and add more options to enum.

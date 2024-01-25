@@ -27,8 +27,7 @@ export default function UploadReceiptForm({
     return { checksum: hashHex, base64String };
   };
 
-  const handleFileUpload = async (file: File) => {
-    const { checksum, base64String } = await computeSHA256(file);
+  const storeUploadedFile = async (file: File, checksum: string) => {
     const signedURLResult = await getSignedURL({
       fileSize: file.size,
       fileType: file.type,
@@ -47,55 +46,47 @@ export default function UploadReceiptForm({
     });
 
     const fileUrl = url.split("?")[0];
-    return { fileUrl, fileId, base64String };
-  };
-
-  type FileData = {
-    fileUrl: string | null;
-    fileId: number | null;
-    base64String: string | null;
+    return { fileUrl, fileId };
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
     try {
-      let fileData: FileData = {
-        fileUrl: null,
-        fileId: null,
-        base64String: null,
-      };
       if (file) {
-        setStatusMessage("Uploading...");
-        const fileUploaded = await handleFileUpload(file);
-        fileData = fileUploaded;
+        setStatusMessage("Uploading receipt...");
+        const { checksum, base64String } = await computeSHA256(file);
+        setStatusMessage("Reading data from receipt...");
+        const receiptText = await imageToText(base64String);
+        if (receiptText.failure) {
+          throw new Error(receiptText.failure);
+        }
+        const receiptData = await textToObject(receiptText.success!);
+        if (receiptData.failure) {
+          throw new Error(receiptData.failure);
+        }
+        const receipt = receiptData.success!;
+        setStatusMessage("Adding receipt to database...");
+        const fileStored = await storeUploadedFile(file, checksum);
+        const receiptAddedToDb = await addReceipt({
+          fileId: fileStored.fileId,
+          receiptDate: receipt.date,
+          receiptCategory: receipt.category,
+          receiptTotal: `${receipt.total}`,
+        });
+        if (receiptAddedToDb?.failure) {
+          throw new Error(receiptAddedToDb.failure);
+        }
+        setStatusMessage("Receipt added successfully");
+        setFile(null);
       } else {
         setStatusMessage("No file selected");
         return;
       }
-      setStatusMessage("Adding receipt...");
-      const receiptText = await imageToText(fileData.base64String!);
-      if (receiptText.failure) {
-        throw new Error(receiptText.failure);
-      }
-      const receiptData = await textToObject(receiptText.success!);
-      if (receiptData.failure) {
-        throw new Error(receiptData.failure);
-      }
-      const receipt = receiptData.success!;
-      const receiptAddedToDb = await addReceipt({
-        fileId: fileData.fileId!,
-        receiptDate: receipt.date,
-        receiptCategory: receipt.category,
-        receiptTotal: `${receipt.total}`,
-      });
-      if (receiptAddedToDb?.failure) {
-        throw new Error(receiptAddedToDb.failure);
-      }
-      setStatusMessage("Receipt added successfully");
     } catch (error) {
       console.error(error);
       setStatusMessage("Error uploading receipt");
+      setFile(null);
     } finally {
       setLoading(false);
     }
