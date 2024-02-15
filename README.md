@@ -1,37 +1,10 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/0kd7hglj)
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# AI Expense Tracker
+The AI Expense Tracker is an expense management tool designed to simplify the process of tracking expenses by automating the extraction of necessary data from receipt images. 
+Leveraging AI, this project simplifies expense tracking by accurately identifying and extracting key fields such as date, amount, and category from receipt images.
 
-## Getting Started
-
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+## Key Features:
+- **Receipt Image Parsing:** Automatically reads receipt images to extract relevant expense data.
+- **Structured Data:** Identifies, validates, and writes the data fields such as date, amount, and category into the database.
+- **Data Accuracy:** Utilizes Open AI Vision and Open AI function calling model algorithms with high accuracy results in data extraction.
+- **Customizable Expense Data:** Allows users to customize the extracted data if some inaccuracies exist.
+- **Dashboard UI:** Users can review recent expenses, totals for all time, and other statistical measures.
