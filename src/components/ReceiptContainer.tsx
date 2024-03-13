@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { Receipt } from "@/db/queries/allReceipts";
 import { deleteReceipt } from "@/app/expenses/actions";
+import { useEffect, useState } from "react";
 
 export default function ReceiptContainer({
   receipt,
@@ -10,6 +11,22 @@ export default function ReceiptContainer({
   receipt: Receipt;
   setEditModalOpen: () => void;
 }) {
+  const [formattedReceiptDate, setFormattedReceiptDate] = useState("");
+  const [formattedDateExpenseAdded, setFormattedDateExpenseAdded] =
+    useState("");
+
+  useEffect(() => {
+    const formattedReceiptDate = new Date(
+      receipt.receiptDate
+    ).toLocaleDateString("en-US", {
+      timeZone: "UTC",
+    });
+    setFormattedReceiptDate(formattedReceiptDate);
+    const formattedDateExpenseAdded =
+      receipt.dateAdded.toLocaleDateString("en-US");
+    setFormattedDateExpenseAdded(formattedDateExpenseAdded);
+  }, [receipt]);
+
   const handleDelete = async () => {
     try {
       await deleteReceipt(receipt.id);
@@ -25,9 +42,21 @@ export default function ReceiptContainer({
     >
       <div className="flex w-full h-full flex-col gap-2 text-xs font-medium text-gray-700">
         <p className="col-span-2 text-gray-500 mb-6">
-          Date Added: {receipt.dateAdded.toLocaleDateString("en-US")}
+          Date Added:{" "}
+          {formattedDateExpenseAdded ? (
+            formattedDateExpenseAdded
+          ) : (
+            <span className="animate-pulse bg-gray-200 h-2 w-24 inline-block rounded"></span>
+          )}
         </p>
-        <h2>Receipt Date: {receipt.receiptDate}</h2>
+        <h2>
+          Receipt Date:{" "}
+          {formattedReceiptDate ? (
+            formattedReceiptDate
+          ) : (
+            <span className="animate-pulse bg-gray-200 h-2 w-24 inline-block rounded"></span>
+          )}
+        </h2>
         <p>Total: ${receipt.receiptTotal}</p>
         <p>Category: {receipt.receiptCategory}</p>
       </div>
