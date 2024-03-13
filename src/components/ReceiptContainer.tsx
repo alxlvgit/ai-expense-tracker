@@ -27,12 +27,7 @@ export default function ReceiptContainer({
         <p className="col-span-2 text-gray-500 mb-6">
           Date Added: {receipt.dateAdded.toLocaleDateString("en-US")}
         </p>
-        <h2>
-          Receipt Date:{" "}
-          {new Date(receipt.receiptDate).toLocaleDateString("en-US", {
-            timeZone: "UTC",
-          })}
-        </h2>
+        <h2>Receipt Date: {receipt.receiptDate}</h2>
         <p>Total: ${receipt.receiptTotal}</p>
         <p>Category: {receipt.receiptCategory}</p>
       </div>
