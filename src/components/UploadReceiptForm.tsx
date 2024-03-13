@@ -58,39 +58,42 @@ export default function UploadReceiptForm({
     e.preventDefault();
     setLoading(true);
     try {
-      if (file) {
-        setStatusMessage("Uploading receipt...");
-        const { checksum, base64String } = await computeSHA256(file);
-        setStatusMessage("Reading data from receipt...");
-        const receiptText = await imageToText(base64String);
-        if (receiptText.failure) {
-          throw new Error(receiptText.failure);
-        }
-        const receiptData = await textToObject(receiptText.success!);
-        if (receiptData.failure) {
-          throw new Error(receiptData.failure);
-        }
-        const receipt = receiptData.success!;
-        setStatusMessage("Adding receipt to database...");
-        const fileStored = await storeUploadedFile(file, checksum);
-        const receiptAddedToDb = await addReceipt({
-          fileId: fileStored.fileId,
-          receiptDate: receipt.date,
-          receiptCategory: receipt.category,
-          receiptTotal: `${receipt.total}`,
-        });
-        if (receiptAddedToDb?.failure) {
-          throw new Error(receiptAddedToDb.failure);
-        }
-        setStatusMessage("Receipt added successfully");
-        setFile(null);
-      } else {
+      if (!file) {
         setStatusMessage("No file selected");
         return;
       }
+      setStatusMessage("Uploading receipt...");
+      const { checksum, base64String } = await computeSHA256(file);
+      setStatusMessage("Reading data from receipt...");
+      const receiptText = await imageToText(base64String);
+      if (receiptText.failure) {
+        throw new Error(receiptText.failure);
+      }
+      const receiptData = await textToObject(receiptText.success!);
+      if (receiptData.failure) {
+        throw new Error(receiptData.failure);
+      }
+      const receipt = receiptData.success!;
+      setStatusMessage("Adding receipt to database...");
+      const fileStored = await storeUploadedFile(file, checksum);
+      const receiptAddedToDb = await addReceipt({
+        fileId: fileStored.fileId,
+        receiptDate: receipt.date,
+        receiptCategory: receipt.category,
+        receiptTotal: `${receipt.total}`,
+      });
+      if (receiptAddedToDb?.failure) {
+        throw new Error(receiptAddedToDb.failure);
+      }
+      setStatusMessage("Receipt added successfully");
+      setFile(null);
     } catch (error) {
       console.error(error);
-      setStatusMessage("Error uploading receipt");
+      if (error instanceof Error && error.message.includes("413")) {
+        setStatusMessage("File too large");
+      } else {
+        setStatusMessage("Error uploading receipt");
+      }
       setFile(null);
     } finally {
       setLoading(false);
