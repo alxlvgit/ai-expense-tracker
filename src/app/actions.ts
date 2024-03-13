@@ -18,8 +18,8 @@ const s3Client = new S3Client({
   },
 });
 
-const allowedFileTypes = ["image/jpeg", "image/png"];
-const maxFileSize = 1048576 * 10; // 1 MB
+const allowedFileTypes = ["image/jpeg", "image/png", "image/jpg"];
+const maxFileSize = 1024 * 1024 * 5; // 5MB
 
 const generateFileName = (bytes = 32) =>
   crypto.randomBytes(bytes).toString("hex");
