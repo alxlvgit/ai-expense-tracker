@@ -16,7 +16,11 @@ const CurrentDateTime = () => {
   return (
     <div>
       <h2 className="text-xs text-gray-500 mt-1">
-        {currentTime && format(currentTime, "MM/dd/yyyy, hh:mm a")}
+        {currentTime ? (
+          format(currentTime, "MM/dd/yyyy, hh:mm a")
+        ) : (
+          <span className="animate-pulse bg-gray-200 h-2 w-24 inline-block rounded"></span>
+        )}
       </h2>
     </div>
   );
