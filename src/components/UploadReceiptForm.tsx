@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { addReceipt, getSignedURL } from "@/app/actions";
 import { twMerge } from "tailwind-merge";
 import { imageToText, textToObject } from "@/app/image-to-text";
@@ -15,6 +15,11 @@ export default function UploadReceiptForm({
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleIconClick = () => {
+    fileInputRef.current?.click();
+  };
 
   const computeSHA256 = async (file: File) => {
     const bytes = await file.arrayBuffer();
@@ -116,7 +121,7 @@ export default function UploadReceiptForm({
       >
         <div className="flex gap-2 flex-col items-center justify-center p-6 w-full">
           <div className="flex flex-col items-center w-full">
-            <label className="flex justify-center">
+            <label className="flex justify-center" onClick={handleIconClick}>
               <svg
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
@@ -128,16 +133,17 @@ export default function UploadReceiptForm({
                   <path d="M23 4v2h-3v3h-2V6h-3V4h3V1h2v3h3zm-8.5 7c.828 0 1.5-.672 1.5-1.5S15.328 8 14.5 8 13 8.672 13 9.5s.672 1.5 1.5 1.5zm3.5 3.234l-.513-.57c-.794-.885-2.18-.885-2.976 0l-.655.73L9 9l-3 3.333V6h7V4H6c-1.105 0-2 .895-2 2v12c0 1.105.895 2 2 2h12c1.105 0 2-.895 2-2v-7h-2v3.234z" />
                 </g>
               </svg>
-
-              <input
-                className="bg-black flex-1 border-none outline-none hidden"
-                name="receipt"
-                type="file"
-                accept="image/*"
-                capture="environment"
-                onChange={handleFileChange}
-              />
             </label>
+            <input
+              ref={fileInputRef}
+              className="bg-black flex-1 border-none outline-none hidden"
+              name="receipt"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleFileChange}
+              aria-hidden="true"
+            />
             <p className="font-bold text-xs">Click to add receipt</p>
             {previewUrl && file && (
               <div className="mt-4 rounded-lg relative overflow-hidden">
