@@ -133,11 +133,12 @@ export default function UploadReceiptForm({
                 className="bg-black flex-1 border-none outline-none hidden"
                 name="receipt"
                 type="file"
-                accept="image/jpeg,image/png"
+                accept="image/*"
+                capture="environment"
                 onChange={handleFileChange}
               />
             </label>
-            <p className="font-bold text-xs">Upload a receipt</p>
+            <p className="font-bold text-xs">Click to add receipt</p>
             {previewUrl && file && (
               <div className="mt-4 rounded-lg relative overflow-hidden">
                 {file.type.startsWith("image/") ? (
