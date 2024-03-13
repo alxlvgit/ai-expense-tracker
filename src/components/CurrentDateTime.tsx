@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 
-const CurrentDateTime = ({ initialTime }: { initialTime?: Date }) => {
-  const [currentTime, setCurrentTime] = useState(initialTime || new Date());
+const CurrentDateTime = () => {
+  const [currentTime, setCurrentTime] = useState<Date | null>(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -16,7 +16,7 @@ const CurrentDateTime = ({ initialTime }: { initialTime?: Date }) => {
   return (
     <div>
       <h2 className="text-xs text-gray-500 mt-1">
-        {format(currentTime, "MM/dd/yyyy, hh:mm a")}
+        {currentTime && format(currentTime, "MM/dd/yyyy, hh:mm a")}
       </h2>
     </div>
   );

@@ -44,7 +44,7 @@ export default async function Home() {
   return (
     <main className="flex min-h-screen flex-col w-full px-6  sm:px-20 py-16">
       <h1 className="font-bold text-lg">Welcome, {user.name}!</h1>
-      <CurrentDateTime initialTime={new Date()} />
+      <CurrentDateTime />
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16">
         <div className="flex flex-col gap-6">
           <TotalForMonth
