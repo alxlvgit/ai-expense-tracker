@@ -102,7 +102,7 @@ export const addReceipt = async ({
   // check if user is authenticated
   const session = await auth();
   if (!session) {
-    return { failure: "not authenticated" };
+    return { failure: "Not authenticated" };
   }
   // get the user id
   const userId = session.user.id;
@@ -117,7 +117,7 @@ export const addReceipt = async ({
       .then((rows) => rows[0]);
 
     if (!file) {
-      return { failure: "receipt image not found" };
+      return { failure: "Receipt image not found" };
     }
   }
 

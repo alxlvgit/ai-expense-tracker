@@ -54,6 +54,12 @@ export default function UploadReceiptForm({
     return { fileUrl, fileId };
   };
 
+  const handleError = (errorStatusMessage: string) => {
+    setStatusMessage(errorStatusMessage);
+    setLoading(false);
+    setFile(null);
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
@@ -67,11 +73,13 @@ export default function UploadReceiptForm({
       setStatusMessage("Reading data from receipt...");
       const receiptText = await imageToText(base64String);
       if (receiptText.failure) {
-        throw new Error(receiptText.failure);
+        handleError(receiptText.failure);
+        return;
       }
       const receiptData = await textToObject(receiptText.success!);
       if (receiptData.failure) {
-        throw new Error(receiptData.failure);
+        handleError(receiptData.failure);
+        return;
       }
       const receipt = receiptData.success!;
       setStatusMessage("Adding receipt to database...");
@@ -83,20 +91,14 @@ export default function UploadReceiptForm({
         receiptTotal: `${receipt.total}`,
       });
       if (receiptAddedToDb?.failure) {
-        throw new Error(receiptAddedToDb.failure);
+        handleError(receiptAddedToDb.failure);
+        return;
       }
       setStatusMessage("Receipt added successfully");
       setFile(null);
     } catch (error) {
       console.error(error);
-      if (error instanceof Error && error.message.includes("413")) {
-        setStatusMessage("File too large");
-      } else {
-        setStatusMessage("Error uploading receipt");
-      }
-      setFile(null);
-    } finally {
-      setLoading(false);
+      handleError("An error occurred. Please try again.");
     }
   };
 
