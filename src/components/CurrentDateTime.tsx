@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 
-const CurrentDateTime = () => {
-  const [currentTime, setCurrentTime] = useState(new Date());
+const CurrentDateTime = ({ initialTime }: { initialTime?: Date }) => {
+  const [currentTime, setCurrentTime] = useState(initialTime || new Date());
 
   useEffect(() => {
     const interval = setInterval(() => {
