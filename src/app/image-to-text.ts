@@ -35,7 +35,7 @@ export const imageToText = async (base64Image: string): ImageToTextResponse => {
           content: [
             {
               type: "text",
-              text: "What is the date, purchase category and total on this receipt image? Do not list the items on the receipt or describe the image. If something is not visible, write 'not visible' next to it.",
+              text: "What is the date, purchase category and total on this receipt image? Pick category based on the items on the receipt. Do not list the items on the receipt or describe the image.",
             },
             {
               type: "image_url",
@@ -65,8 +65,10 @@ const schema = z.object({
     .date()
     .describe("The date of the receipt in the format MM-DD-YYYY"),
   category: z
-    .enum(["grocery", "transportation", "clothing", "other"])
-    .describe("The category of the receipt"),
+    .enum(["grocery", "transportation", "clothing", "electronics", "other"])
+    .describe(
+      "The category of the receipt. Choose from grocery, transportation, clothing, electronics, other"
+    ),
 });
 
 // Schema for the extraction function

@@ -16,7 +16,7 @@ export const Receipts = ({ receipts }: { receipts: Receipt[] }) => {
       {isModalOpen && (
         <div className="fixed inset-0 bg-black opacity-50 z-40"></div>
       )}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 w-full gap-6">
         {receipts.map((receipt) => (
           <ReceiptContainer
             key={receipt.id}

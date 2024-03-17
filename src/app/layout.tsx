@@ -22,6 +22,11 @@ export default function RootLayout({
           <Navbar />
         </header>
         {children}
+        <footer className="w-full h-10 bg-white shadow-sm px-2 sm:px-20">
+          <p className="text-center text-gray-500 sm:text-sm text-xs">
+            &copy; {new Date().getFullYear()} AI Expense Tracker
+          </p>
+        </footer>
       </body>
     </html>
   );

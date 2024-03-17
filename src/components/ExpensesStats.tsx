@@ -22,7 +22,7 @@ export default function ExpensesStats({
             >
               <p className="text-xs text-gray-500">{categoryData.category}</p>
               <p className="text-xs font-bold text-gray-500">
-                {categoryData.total}
+                {`$${categoryData.total}`}
               </p>
             </div>
           ))
