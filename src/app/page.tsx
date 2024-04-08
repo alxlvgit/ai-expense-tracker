@@ -1,5 +1,6 @@
 import { auth } from "@/auth";
 import CurrentDateTime from "@/components/CurrentDateTime";
+import ExpensesChart from "@/components/ExpensesChart";
 import ExpensesStats from "@/components/ExpensesStats";
 import TotalForMonth from "@/components/TotalForMonth";
 import UploadReceiptForm from "@/components/UploadReceiptForm";
@@ -7,6 +8,7 @@ import {
   threeHighestExpensesByCategory,
   threeRecentExpensesByCategory,
   totalExpensesByMonthYear,
+  totalExpensesByYear,
 } from "@/db/queries/stats";
 import { redirect } from "next/navigation";
 
@@ -41,6 +43,11 @@ export default async function Home() {
       category.category.charAt(0).toUpperCase() + category.category.slice(1);
   });
 
+  const monthTotalsForYear = await totalExpensesByYear.execute({
+    userId: user.id,
+    receiptYear: new Date().getFullYear(),
+  });
+
   return (
     <main className="flex min-h-screen flex-col w-full px-6  sm:px-20 py-16">
       <h1 className="font-bold text-lg">Welcome, {user.name}!</h1>
@@ -60,6 +67,7 @@ export default async function Home() {
         <div className="flex flex-col gap-6">
           <ExpensesStats data={threeTopExpenses} type="topThree" />
           <ExpensesStats type="recent" data={threeRecentExpenses} />
+          <ExpensesChart expensesForYear={monthTotalsForYear} />
         </div>
       </div>
     </main>

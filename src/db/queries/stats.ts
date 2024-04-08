@@ -73,3 +73,26 @@ export const totalExpensesByMonthYear = db
     sql<number>`extract(month from ${receiptsTable.receiptDate})`
   )
   .prepare("receipts_total_for_user_by_month");
+
+// Get all expenses for a year and group by month
+export const totalExpensesByYear = db
+  .select({
+    total: sql<number>`sum (${receiptsTable.receiptTotal})`,
+    month: sql<number>`extract(month from ${receiptsTable.receiptDate})`,
+  })
+  .from(receiptsTable)
+  .where(
+    and(
+      eq(receiptsTable.userId, sql.placeholder("userId")),
+      eq(
+        sql<number>`extract(year from ${receiptsTable.receiptDate})`,
+        sql.placeholder("receiptYear")
+      )
+    )
+  )
+  .groupBy(
+    sql<number>`extract(year from ${receiptsTable.receiptDate})`,
+    sql<number>`extract(month from ${receiptsTable.receiptDate})`
+  )
+  .orderBy(asc(sql<number>`extract(month from ${receiptsTable.receiptDate})`))
+  .prepare("receipts_total_for_user_by_year");

@@ -121,7 +121,7 @@ export default function UploadReceiptForm({
   return (
     <>
       <form
-        className="w-full m-auto border border-gray-200 flex flex-col items-center  shadow-lg rounded-lg px-6 py-6"
+        className="w-full mx-auto border border-gray-200 flex flex-col items-center  shadow-lg rounded-lg px-6 py-6"
         onSubmit={handleSubmit}
       >
         <div className="flex gap-2 flex-col items-center justify-center p-6 w-full">

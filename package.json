@@ -21,6 +21,7 @@
     "@heroicons/react": "^2.0.18",
     "@neondatabase/serverless": "^0.6.0",
     "date-fns": "^2.30.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "drizzle-orm": "^0.29.3",
     "langchain": "^0.0.167",
@@ -31,6 +32,7 @@
     "postgres": "^3.4.3",
     "react": "^18",
     "react-dom": "^18",
+    "recharts": "^2.12.4",
     "tailwind-merge": "^2.0.0",
     "zod": "^3.22.4",
     "zod-to-json-schema": "^3.21.4"
