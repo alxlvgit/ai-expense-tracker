@@ -27,7 +27,7 @@ export const imageToText = async (base64Image: string): ImageToTextResponse => {
     const url = `data:image/jpeg;base64,${base64Image}`;
     const openai = new OpenAI();
     const response = await openai.chat.completions.create({
-      model: "gpt-4-vision-preview",
+      model: "gpt-4o-mini",
       max_tokens: 80,
       messages: [
         {
